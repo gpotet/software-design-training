@@ -1,64 +1,36 @@
 require "test_helper_training"
 
 class Iteration1Test < TestHelperTraining
-  teardown do
-    Timecop.return
-  end
+  test 'items should have additional details' do
+    create_book(title: 'Clean Code', isbn: '9780132350884', purchase_price: 12, is_hot: false)
+    create_image(title: 'Manifesto for Agile Software Development', width: 800, height: 600, source: 'Getty', format: 'jpg')
+    create_video(title: 'Making Impossible States Impossible', duration: 120, quality: 'FullHD')
 
-  test 'book price is +25% from purchase' do
-    skip 'unskip at iteration 1'
-    begin
-      ENV['BOOK_PURCHASE_PRICE'] = '10'
-      book = create_book(title: 'Team of Teams', content: 'content')
-      assert_price_equal 12.5, get_product_price(book)
-    ensure
-      ENV.delete('BOOK_PURCHASE_PRICE')
-    end
-  end
-  test 'premium books are 5% more expensive' do
-    skip 'unskip at iteration 1'
-    begin
-      ENV['BOOK_PURCHASE_PRICE'] = '10'
-      book = create_book(title: 'Premium: Good Strategy Bad Strategy', content: 'content')
-      assert_price_equal 13.125, get_product_price(book)
-    ensure
-      ENV.delete('BOOK_PURCHASE_PRICE')
-    end
-  end
+    get '/products'
+    products_by_kind = response.parsed_body
 
-  test 'image price is 7' do
-    skip 'unskip at iteration 1'
-    image = create_image(title: 'Image 1', content: 'content')
-    assert_price_equal 7, get_product_price(image)
-  end
-  test 'premium images are not more expensive' do
-    skip 'unskip at iteration 1'
-    image = create_image(title: 'Premium image 1', content: 'content')
-    assert_price_equal 7, get_product_price(image)
-  end
+    book = products_by_kind['books'][0]
+    assert_equal 'book', book['kind']
+    assert_equal 'Clean Code', book['title']
+    assert_equal '9780132350884', book['isbn']
+    assert_nil book['purchase_price']
+    assert_equal false, book['is_hot']
+    assert_nil book['created_at']
 
-  test 'video day price is 15' do
-    skip 'unskip at iteration 1'
-    Timecop.travel(Time.now.change(hour: 10))
-    video = create_video(title: 'Make Data Structures', content: 'content')
-    assert_price_equal 15, get_product_price(video)
-  end
-  test 'video night price is 9' do
-    skip 'unskip at iteration 1'
-    Timecop.travel(Time.now.change(hour: 2))
-    video = create_video(title: 'From Rails to Elm and Haskell', content: 'content')
-    assert_price_equal 9, get_product_price(video)
-  end
-  test 'premium videos are 5% more expensive during the day' do
-    skip 'unskip at iteration 1'
-    Timecop.travel(Time.now.change(hour: 10))
-    video = create_video(title: 'Types, and Why You Should Care PREMIUM', content: 'content')
-    assert_price_equal 15.75, get_product_price(video)
-  end
-  test 'premium videos are 5% more expensive during the night' do
-    skip 'unskip at iteration 1'
-    Timecop.travel(Time.now.change(hour: 2))
-    video = create_video(title: 'DDD Sous Pression, premium', content: 'content')
-    assert_price_equal 9.45, get_product_price(video)
+    image = products_by_kind['images'][0]
+    assert_equal 'image', image['kind']
+    assert_equal 'Manifesto for Agile Software Development', image['title']
+    assert_equal 800, image['width']
+    assert_equal 600, image['height']
+    assert_equal 'Getty', image['source']
+    assert_equal 'jpg', image['format']
+    assert_nil image['created_at']
+
+    video = products_by_kind['videos'][0]
+    assert_equal 'video', video['kind']
+    assert_equal 'Making Impossible States Impossible', video['title']
+    assert_equal 120, video['duration']
+    assert_equal 'FullHD', video['quality']
+    assert_nil video['created_at']
   end
 end
