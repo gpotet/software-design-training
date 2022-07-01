@@ -3,6 +3,7 @@
     json.array! products do |product|
       json.title product.title
       json.kind product.kind
+      json.content product.content
       case product.kind
       when 'book' then json.partial! 'products/book_details', book: product
       when 'image' then json.partial! 'products/image_details', image: product
