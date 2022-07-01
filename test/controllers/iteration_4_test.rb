@@ -1,8 +1,8 @@
 require "test_helper_training"
 
-class Iteration5Test < TestHelperTraining
+class Iteration4Test < TestHelperTraining
   test 'it sends a newsletter with the existing products' do
-    skip 'unskip at iteration 5'
+    skip 'unskip at iteration 4'
     create_book(title: 'Software craft', isbn: '2100825208', purchase_price: 42, is_hot: false, created_at: Time.parse('2022-05-05 09:18'))
     create_book(title: 'Refactoring: Improving the Design of Existing Code', isbn: '9780134757599', purchase_price: 42, is_hot: false, created_at: Time.parse('2021-04-05'))
     create_image(title: 'XKCD: Good code', width: 800, height: 600, source: 'unknown', format: 'jpg', created_at: Time.parse('2022-05-19 19:32'))
@@ -24,7 +24,7 @@ class Iteration5Test < TestHelperTraining
   end
 
   test 'gets an image with its details from an external service' do
-    skip 'unskip at iteration 5'
+    skip 'unskip at iteration 4'
     begin
       ENV['IMAGES_FROM_EXTERNAL_SERVICE'] = 'true'
       IMAGE_EXTERNAL_ID = 42

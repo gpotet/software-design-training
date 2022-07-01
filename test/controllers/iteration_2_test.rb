@@ -1,7 +1,7 @@
 require "test_helper_training"
 require "csv"
 
-class Iteration3Test < TestHelperTraining
+class Iteration2Test < TestHelperTraining
   teardown do
     Timecop.return
   end

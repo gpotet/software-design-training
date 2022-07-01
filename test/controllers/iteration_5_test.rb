@@ -1,8 +1,8 @@
 require "test_helper_training"
 
-class Iteration6Test < TestHelperTraining
+class Iteration5Test < TestHelperTraining
   test 'users can purchase products' do
-    skip 'unskip at iteration 6'
+    skip 'unskip at iteration 5'
     alice = create_user(first_name: 'Alice')
     bob = create_user(first_name: 'Bob')
 
@@ -26,7 +26,7 @@ class Iteration6Test < TestHelperTraining
   end
 
   test 'creates a download when purchasing a product' do
-    skip 'unskip at iteration 6'
+    skip 'unskip at iteration 5'
     user = create_user(first_name: 'Alice')
     book = create_book(title: 'Team Topologies', isbn: '9781942788829', purchase_price: 42, is_hot: false)
 
