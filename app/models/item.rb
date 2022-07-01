@@ -4,4 +4,6 @@ class Item < ApplicationRecord
 
   KINDS = %w(book image video)
   validates :kind, presence: true, inclusion: { in: KINDS }
+
+  attr_accessor :price
 end

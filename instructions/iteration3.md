@@ -1,7 +1,14 @@
-# Iteration 3: extend pricing strategies using new attributes
+# Iteration 2: compute price
 
-As we have new attributes, let's refine our pricing model:
+Now we want to make money!
+Product price is displayed in the products list, using the pricing rules listed below.
 
+Price calculation was already developed in `ProductsController`, but we feel that it's hard to add new rules.
+All rules are covered by tests defined in `ProductsControllerTest`, so we'll be able to refactor safely.
+
+Let's refactor our pricing system and improve its design!
+
+Pricing rules:
 - books:
   - compute price with +25% from `purchase_price` instead of the environment variable
   - if the book is_hot, its price should be 9.99 during weekdays
@@ -21,6 +28,5 @@ As we have new attributes, let's refine our pricing model:
   - time over 10 minutes is not accounted for 'SD' videos
   - for other formats, price is 15
   - video price is reduced by 40% during the night (22 PM - 5 AM)
-- still have the +5% price increase for any book or video containing 'premium' in the title (from iteration 1)
+- books and videos only: if the title of the item contains "premium" with any capitalization, increase the price by 5%
 
-Unskip tests from `iteration_3_test.rb` and fix what is needed.

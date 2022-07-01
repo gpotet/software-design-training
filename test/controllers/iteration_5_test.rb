@@ -1,47 +1,88 @@
 require "test_helper_training"
 
-class Iteration5Test < TestHelperTraining
-  test 'it sends a newsletter with the existing products' do
-    skip 'unskip at iteration 5'
-    create_book(title: 'Software craft', isbn: '2100825208', purchase_price: 42, is_hot: false, created_at: Time.parse('2022-05-05 09:18'))
-    create_book(title: 'Refactoring: Improving the Design of Existing Code', isbn: '9780134757599', purchase_price: 42, is_hot: false, created_at: Time.parse('2021-04-05'))
-    create_image(title: 'XKCD: Good code', width: 800, height: 600, source: 'unknown', format: 'jpg', created_at: Time.parse('2022-05-19 19:32'))
-    create_video(title: 'Living Documentation : you will like documentation', duration: 120, quality: 'HD', created_at: Time.parse('2022-05-23 13:01'))
-    create_video(title: 'What is DDD - Eric Evans - DDD Europe', duration: 120, quality: 'HD', created_at: Time.parse('2022-05-31 09:18'))
+class Iteration6Test < TestHelperTraining
+  test 'users can purchase products' do
+    skip 'unskip at iteration 6'
+    alice = create_user(first_name: 'Alice')
+    bob = create_user(first_name: 'Bob')
 
-    expected_mail_content = <<~MAIL
-    Books
-    * Software craft - 2100825208 - 52.50
-    Images
-    * XKCD: Good code - 800x600 - 7.00
-    Videos
-    * Living Documentation : you will like documentation - 120 seconds - 15.00
-    MAIL
+    book_1 = create_book(title: 'Remote', isbn: '0804137501', purchase_price: 42, is_hot: false)
+    book_2 = create_book(title: 'Rework', isbn: '0307463745', purchase_price: 42, is_hot: false)
+    book_3 = create_book(title: "It Doesn't Have to Be Crazy at Work", isbn: '0062874780', purchase_price: 42, is_hot: false)
 
-    mail_sender = mock
-    mail_sender.expects(:send_newsletter).with(expected_mail_content)
-    NewsletterJob.perform_now(from: '2022-05-01', to: '2022-05-30', mail_sender: mail_sender)
+    post purchases_url, params: { user_id: alice.id, product_id: book_1.id }
+    assert_equal 200, response.status, response.body
+    post purchases_url, params: { user_id: alice.id, product_id: book_2.id }
+    assert_equal 200, response.status, response.body
+    post purchases_url, params: { user_id: bob.id, product_id: book_3.id }
+    assert_equal 200, response.status, response.body
+
+    get purchases_url, params: { user_id: alice.id }
+
+    purchased_books = response.parsed_body
+    assert_equal 2, purchased_books.size
+    assert_equal 'Remote', purchased_books[0]['title']
+    assert_equal 'Rework', purchased_books[1]['title']
   end
 
-  test 'gets an image with its details from an external service' do
-    skip 'unskip at iteration 5'
-    begin
-      ENV['IMAGES_FROM_EXTERNAL_SERVICE'] = 'true'
-      IMAGE_EXTERNAL_ID = 42
-      ImageExternalService.expects(:upload_image_details).with(width: 800, height: 600, source: 'Getty', format: 'jpg').returns(IMAGE_EXTERNAL_ID)
-      ImageExternalService.expects(:get_image_details).with(IMAGE_EXTERNAL_ID).returns({width: 800, height: 600, source: 'Getty', format: 'jpg'})
+  test 'creates a download when purchasing a product' do
+    skip 'unskip at iteration 6'
+    user = create_user(first_name: 'Alice')
+    book = create_book(title: 'Team Topologies', isbn: '9781942788829', purchase_price: 42, is_hot: false)
 
-      image = create_image(title: 'Item 2', width: 800, height: 600, source: 'Getty', format: 'jpg')
+    # No downloads before purchase
+    get downloads_url, params: { user_id: user.id }
+    downloaded_books = response.parsed_body['books']
+    assert_nil downloaded_books
 
-      get products_url
+    post purchases_url, params: { user_id: user.id, product_id: book.id }
+    assert_equal 200, response.status, response.body
 
-      products_by_kind = response.parsed_body
-      image = products_by_kind['images'][0]
-      assert_equal 'Item 2', image['title']
-      assert_equal 'image', image['kind']
-      assert_equal 800, image['width']
-    ensure
-      ENV.delete('IMAGES_FROM_EXTERNAL_SERVICE')
-    end
+    # One download after purchase
+    get downloads_url, params: { user_id: user.id }
+    downloaded_books = response.parsed_body['books'] || []
+    assert_equal 1, downloaded_books.count
+    assert_equal 'Team Topologies', downloaded_books[0]['title']
+  end
+
+  test 'purchases contain a price and reference to the product purchased' do
+    skip 'unskip at iteration 6'
+    user = create_user(first_name: 'Alice')
+    book = create_book(title: 'Extreme Ownership', isbn: '9783962670658', purchase_price: 12, is_hot: false)
+
+    post purchases_url, params: { user_id: user.id, product_id: book.id }
+    assert_equal 200, response.status, response.body
+
+    get purchases_url, params: { user_id: user.id }
+    purchased_book = response.parsed_body[0]
+    assert_equal 'Extreme Ownership', purchased_book['title']
+    assert_equal book.id, purchased_book['item_id']
+    assert_equal 15, purchased_book['price']
+  end
+
+  test 'the title and price in the invoice does not change' do
+    skip 'unskip at iteration 6'
+    user = create_user(first_name: 'Alice')
+    book = create_book(title: 'Drive', isbn: '9781101524275', purchase_price: 42, is_hot: false)
+
+    post purchases_url, params: { user_id: user.id, product_id: book.id }
+    assert_equal 200, response.status, response.body
+    update_book(item: book, title: 'Drive: The surprising truth about what motivates us', purchase_price: 24)
+
+    get purchases_url, params: { user_id: user.id }
+    purchased_book = response.parsed_body[0]
+    assert_equal 'Drive', purchased_book['title']
+    assert_equal 52.5, purchased_book['price']
+  end
+
+  private
+
+  def create_user(first_name:)
+    User.create!(first_name: first_name)
+  end
+
+  def update_book(item:, title: nil, purchase_price: nil)
+    item.title = title unless title.nil?
+    item.save!
   end
 end
