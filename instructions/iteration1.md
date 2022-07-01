@@ -1,13 +1,21 @@
-# Iteration 1: compute price
+# Iteration 1: add specific product details
 
-Now we want to make money! Let's add some price to our items.
-Product price is displayed in the products list.
+## Context 
 
-Here are the pricing rules we want to use:
+We noticed that we miss some meaningful information to describe our products and sell them.
+Let's add them:
 
-- books: we have a `BOOK_PURCHASE_PRICE` environment variable, just add +25% to compute the price
-- images: the price is always 7
-- videos: the price is 15 during the day (5AM - 10PM) and 9 otherwise
-- books and videos only: if the title of the item contains "premium" with any capitalization, increase the price by 5%
+- books: isbn (string, e.g. '9781603095099'), purchase_price (float), is_hot (boolean)
+- images: width (int), height (int), source ('unknown', 'Getty', 'NationalGeographic'), format ('jpg', 'png', 'raw')
+- videos: duration (int in seconds), quality (4k, SD, FullHD)
 
-Unskip tests from `iteration_1_test.rb` and fix what is needed.
+We want to retrieve them from the `products_controller#index` endpoint.
+And oh, `created_at` and `updated_at` fields should not be exposed anymore, and of course, not the `purchase_price` also ^^.
+
+## Instructions
+
+* First, let's think about how you would model and store products with these details.
+* Let us know when you've picked one and we'll provide you with an implementation
+* Now let's have a look at how it's implemented and if you would change parts of the design.
+
+NB: tests in `iteration_1_test.rb` cover everything, you should be able to refactor safely.

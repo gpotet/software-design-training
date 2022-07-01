@@ -1,10 +1,15 @@
-# Iteration 4: pricing simulation
+# Iteration 4: external image service & newsletter
 
-Some creators want to have a price simulation before adding their content to the store.
-It's time to offer more transparency!
+## External image service
 
-In this iteration, we will add an endpoint (`price_simulation_controller#compute`) to compute the price of an item, only from its given attributes.
-Some attributes are optional such as `title` or `is_hot` as they have a clear default (`false`) on pricing.
-Make sure to return good errors like defined in the tests ;)
+We now want to support another strage kind for our images. Images can now be uploaded and fetched from an
+external service by using the class `ImageExternalService`.
+We also want to keep our usual database storage, and use the external service only when the environment variable
+`ENV['IMAGES_FROM_EXTERNAL_SERVICE'] = 'true'`.
+
+## Newsletter
+
+Our store is full of goods to sell, but still has too few sales.
+We want to create a monthly newsletter (`newsletter_job`) recommending best books of the month to all our users.
 
 Unskip tests from `iteration_4_test.rb` and fix what is needed.
