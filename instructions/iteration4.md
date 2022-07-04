@@ -3,9 +3,15 @@
 ## External image service
 
 We now want to support another strage kind for our images. Images can now be uploaded and fetched from an
-external service by using the class `ImageExternalService`.
-We also want to keep our usual database storage, and use the external service only when the environment variable
-`ENV['IMAGES_FROM_EXTERNAL_SERVICE'] = 'true'`.
+external service by using the class `ImageExternalService`. More specifically, this external service stores
+the following attributes of our images: `width`, `height`, `source` and `format`.
+
+Those attributes should no longer be stored in our database. Our database should only store the following
+attributes: `title`, `content`, `kind` (if you were storing it before), and the external ID provided
+by the external service to identify the image data.
+
+All this happens only if `ENV['IMAGES_FROM_EXTERNAL_SERVICE'] = 'true'`. Otherwise, we keep the same database
+storage as the previous iterations.
 
 ## Newsletter
 
