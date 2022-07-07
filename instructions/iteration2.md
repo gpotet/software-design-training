@@ -1,14 +1,16 @@
 # Iteration 2: compute price
 
 ## Context
+
 Now we want to make money!
 Product price is displayed in the products list, using the pricing rules listed below.
 
 Pricing rules:
+
 - books:
-  - compute price with +25% from `purchase_price` instead of the environment variable
+  - compute price with +25% from `purchase_price`
   - if the book is_hot, its price should be 9.99 during weekdays
-  - if book is present in `app/assets/config/isbn_prices.csv`, get it from there instead
+  - if book is present in `app/assets/config/isbn_prices.csv` (created by tests), get it from there instead
 - images
   - if source is 'NationalGeographic', the price is 0.02/9600px
   - if source is 'Getty'
@@ -28,7 +30,7 @@ Pricing rules:
 
 ## Instructions
 
-Price calculation was already developed in `ProductsController#price`, but we feel that it's hard to add new rules.
-All rules are covered by tests defined in `iteration_2_test.rb`, so we'll be able to refactor safely.
+Price calculation was already developed in [ProductsController#price](../app/controllers/products_controller.rb), but we feel that it's hard to add new rules.
+All rules are covered by tests defined in [iteration_2_test.rb](../test/controllers/iteration_2_test.rb), so we'll be able to refactor safely.
 
 Let's refactor our pricing system and improve its design!

@@ -2,8 +2,8 @@
 
 ## External image service
 
-We now want to support another strage kind for our images. Images can now be uploaded and fetched from an
-external service by using the class `ImageExternalService`. More specifically, this external service stores
+We now want to support another storage kind for our images. Images can now be uploaded and fetched from an
+external service by using the class [ImageExternalService](../app/services/image_external_service.rb). More specifically, this external service stores
 the following attributes of our images: `width`, `height`, `source` and `format`.
 
 Those attributes should no longer be stored in our database. Our database should only store the following
@@ -16,6 +16,6 @@ storage as the previous iterations.
 ## Newsletter
 
 Our store is full of goods to sell, but still has too few sales.
-We want to create a monthly newsletter (`newsletter_job`) recommending best books of the month to all our users.
+We want to create a monthly newsletter ([NewsletterJob](../app/jobs/newsletter_job.rb)) recommending best books of the month to all our users.
 
-Unskip tests from `iteration_4_test.rb` and fix what is needed.
+Unskip tests from [iteration_4_test.rb](../test/controllers/iteration_4_test.rb) and fix what is needed.

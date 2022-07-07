@@ -2,6 +2,8 @@ require "test_helper_training"
 require "csv"
 
 class Iteration2Test < TestHelperTraining
+  # add price in ProductsController to pass these tests
+
   teardown do
     Timecop.return
   end
