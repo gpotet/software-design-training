@@ -3,7 +3,7 @@
 ## Context
 
 Now we want to make money!
-Product price is displayed in the products list, using the pricing rules listed below.
+Let's update the product list with prices, using the pricing rules listed below.
 
 Pricing rules:
 
@@ -30,7 +30,21 @@ Pricing rules:
 
 ## Instructions
 
-Price calculation was already developed in [ProductsController#price](../app/controllers/products_controller.rb), but we feel that it's hard to add new rules.
+Add a price attribute in items returned by the [ProductsController](../app/controllers/products_controller.rb).
 All rules are covered by tests defined in [iteration_2_test.rb](../test/controllers/iteration_2_test.rb), so we'll be able to refactor safely.
 
-Let's refactor our pricing system and improve its design!
+Let's refactor our pricing system, with a good design!
+
+## Cheatsheet
+
+- `Time.now.on_weekday?` checks if we are in weekday
+- `Time.now.hour.between?(5, 21)` checks if hour is between 5 and 21
+
+Read a csv file:
+
+```ruby
+path = Rails.root.join('app/assets/config/isbn_prices.csv')
+return {} unless File.exist?(path)
+prices = CSV.read(path, headers: true, header_converters: :symbol).index_by { |entry| entry[:isbn] }
+price = prices['9781603095099']
+```
