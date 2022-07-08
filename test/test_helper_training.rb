@@ -1,15 +1,15 @@
 require "test_helper"
 
 class TestHelperTraining < ActionDispatch::IntegrationTest
-  def create_book(title:, content: 'content', isbn: nil, purchase_price: nil, is_hot: nil, created_at: nil)
+  def create_book(title:, content: 'content', isbn: '', purchase_price: 0.to_f, is_hot: false, created_at: nil)
     Item.create!(kind: 'book', title: title, content: content, created_at: created_at)
   end
 
-  def create_image(title:, content: 'content', width: nil, height: nil, source: nil, format: nil, created_at: nil)
+  def create_image(title:, content: 'content', width: 0, height: 0, source: '', format: '', created_at: nil)
     Item.create!(kind: 'image', title: title, content: content, created_at: created_at)
   end
 
-  def create_video(title:, content: 'content', duration: nil, quality: nil, created_at: nil)
+  def create_video(title:, content: 'content', duration: 0, quality: '', created_at: nil)
     Item.create!(kind: 'video', title: title, content: content, created_at: created_at)
   end
 

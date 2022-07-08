@@ -1,6 +1,8 @@
 require "test_helper_training"
 
 class Iteration5Test < TestHelperTraining
+  # update PurchasesController to make these tests pass
+
   test 'users can purchase products' do
     skip 'unskip at iteration 5'
     alice = create_user(first_name: 'Alice')

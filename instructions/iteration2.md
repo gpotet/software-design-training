@@ -1,14 +1,16 @@
 # Iteration 2: compute price
 
 ## Context
+
 Now we want to make money!
-Product price is displayed in the products list, using the pricing rules listed below.
+Let's update the product list with prices, using the pricing rules listed below.
 
 Pricing rules:
+
 - books:
-  - compute price with +25% from `purchase_price` instead of the environment variable
+  - compute price with +25% from `purchase_price`
   - if the book is_hot, its price should be 9.99 during weekdays
-  - if book is present in `app/assets/config/isbn_prices.csv`, get it from there instead
+  - if book is present in `app/assets/config/isbn_prices.csv` (created by tests), get it from there instead
 - images
   - if source is 'NationalGeographic', the price is 0.02/9600px
   - if source is 'Getty'
@@ -28,7 +30,21 @@ Pricing rules:
 
 ## Instructions
 
-Price calculation was already developed in `ProductsController#price`, but we feel that it's hard to add new rules.
-All rules are covered by tests defined in `iteration_2_test.rb`, so we'll be able to refactor safely.
+Add a price attribute in items returned by the [ProductsController](../app/controllers/products_controller.rb).
+All rules are covered by tests defined in [iteration_2_test.rb](../test/controllers/iteration_2_test.rb), so we'll be able to refactor safely.
 
-Let's refactor our pricing system and improve its design!
+Let's refactor our pricing system, with a good design!
+
+## Cheatsheet
+
+- `Time.now.on_weekday?` checks if we are in weekday
+- `Time.now.hour.between?(5, 21)` checks if hour is between 5 and 21
+
+Read a csv file:
+
+```ruby
+path = Rails.root.join('app/assets/config/isbn_prices.csv')
+return {} unless File.exist?(path)
+prices = CSV.read(path, headers: true, header_converters: :symbol).index_by { |entry| entry[:isbn] }
+price = prices['9781603095099']
+```
