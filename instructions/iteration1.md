@@ -10,8 +10,7 @@ Let's add some:
 - **videos**: `duration` (int in seconds), `quality` (4k, SD, FullHD)
 
 We want to retrieve them from the [ProductsController#index](../app/controllers/products_controller.rb) endpoint.
-And oh, `created_at` and `updated_at` fields should not be exposed anymore as it's information to keep private.
-And of course, not the `purchase_price` also ^^.
+And oh, `purchase_price`, `created_at` and `updated_at` fields should not be exposed anymore, as it's information we want to keep private ^^
 
 ## Instructions
 
