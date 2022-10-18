@@ -111,13 +111,13 @@ class PurchasesControllerTest < TestHelperTraining
     assert_price_equal 7, response.parsed_body['price']
 
     Timecop.travel Time.new(2022, 1, 1) + 22.hours - 1.minute
-    video = create_video(title: 'Un monolithe microservices ready', duration: 150, quality: '4k')
+    video = create_video(title: 'A microservices-ready monolith', duration: 150, quality: '4k')
     post purchases_url, params: { user_id: user.id, product_id: video.id }
     assert_price_equal 12, response.parsed_body['price']
 
-    video = create_video(title: 'Technical Debt Metaphor explained by Ward Cunningham *premium', duration: 150, quality: '4k')
+    video = create_video(title: 'Technical Debt Metaphor explained by Ward Cunningham *premium', duration: 150, quality: 'other')
     post purchases_url, params: { user_id: user.id, product_id: video.id }
-    assert_price_equal 12.6, response.parsed_body['price']
+    assert_price_equal 15.75, response.parsed_body['price']
   end
 
   test 'the title and price in the invoice does not change when product changes' do
@@ -126,7 +126,7 @@ class PurchasesControllerTest < TestHelperTraining
 
     post purchases_url, params: { user_id: user.id, product_id: book.id }
     assert_equal 200, response.status, response.body
-    update_book(item: book, title: 'Drive: The surprising truth about what motivates us', purchase_price: 24)
+    book.update!(title: 'Drive: The surprising truth about what motivates us')
 
     get purchases_url, params: { user_id: user.id }
     purchased_book = response.parsed_body[0]
@@ -152,6 +152,23 @@ class PurchasesControllerTest < TestHelperTraining
     assert_equal "Product is already in the library of Alice: Team Topologies", response.body
   end
 
+  test 'premium users get 10% discount on 4k videos' do
+    user = create_premium_user(first_name: 'John')
+    Timecop.travel Time.new(2022, 1, 1) + 6.hours
+    video = create_video(title: "Technical coaching with the Samman method - Emily Bache", duration: 150, quality: '4k')
+
+    post purchases_url, params: { user_id: user.id, product_id: video.id }
+    assert_price_equal 10.8, response.parsed_body['price']
+  end
+
+  test 'premium users get 10% discount on images larger than 1920*1080' do
+    user = create_premium_user(first_name: 'John')
+    image = create_image(title: 'Image title', width: 2500, height: 1500, source: 'Getty', format: 'jpg')
+
+    post purchases_url, params: { user_id: user.id, product_id: image.id }
+    assert_price_equal 4.5, response.parsed_body['price']
+  end
+
   test 'user must be authenticated to buy a product' do
     book = create_book(title: 'Team Topologies', isbn: '9781942788829', purchase_price: 42, is_hot: false)
     post purchases_url, params: { product_id: book.id }
@@ -163,13 +180,5 @@ class PurchasesControllerTest < TestHelperTraining
     get purchases_url
     assert_response :unauthorized
     assert_equal "User is not authenticated", response.body
-  end
-
-
-  private
-
-  def update_book(item:, title: nil, purchase_price: nil)
-    item.title = title unless title.nil?
-    item.save!
   end
 end

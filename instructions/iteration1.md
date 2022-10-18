@@ -8,8 +8,9 @@ Unfortunately, these variations aren't displayed in the product list, which make
 ### Pricing rules
 
 - books:
-    - compute price with +25% from `purchase_price` instead of the environment variable
-    - if book is present in `app/assets/config/isbn_prices.csv`, get it from there instead
+    - compute price with 25% margin added to the `purchase_price`. 
+      - `BOOK_PURCHASE_PRICE` environment variable is used when no `purchase_price` is provided. 
+    - if the book is present in `app/assets/config/isbn_prices.csv`, get it from there instead.
 - images
     - if source is 'NationalGeographic', the price is 0.02/9600px
     - if source is 'Getty'
@@ -25,8 +26,12 @@ Unfortunately, these variations aren't displayed in the product list, which make
     - time over 10 minutes is not accounted for 'SD' videos
     - for other formats, price is 15
 
+Premium customers also benefit from exclusive discounts:
+    - A customer is considered as premium as soon as he bought 5 products.
+    - They benefit from 10% discount on high quality content: 4k videos or images larger than 1920x1080.
+
 Price variations:
-- if the book is_hot, its price should be 9.99 during weekdays
+- if the book is_hot, its price should be 9.99 during weekdays (overrides all other pricing rules)
 - video price is reduced by 40% during the night (22 PM - 5 AM)
 - books and videos only: if the title of the item contains "premium" with any capitalization, increase the price by 5%
 

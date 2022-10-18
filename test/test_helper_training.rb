@@ -20,6 +20,16 @@ class TestHelperTraining < ActionDispatch::IntegrationTest
     User.create!(first_name: first_name)
   end
 
+  def create_premium_user(first_name:)
+    user = create_user(first_name: first_name)
+    5.times do |i|
+      book = create_book(title: "Book #{i}")
+      post purchases_url, params: { user_id: user.id, product_id: book.id }
+      assert_response :success
+    end
+    user
+  end
+
   def assert_price_equal(expected, actual)
     assert_in_delta expected, actual, 0.01
   end

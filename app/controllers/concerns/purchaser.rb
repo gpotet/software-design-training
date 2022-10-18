@@ -25,6 +25,9 @@ module Purchaser
       else
         price = 7
       end
+      if premium? && image_resolution(item) > 1920 * 1080
+        price = price * 0.9
+      end
     when 'video'
       price =
         case item.quality
@@ -37,6 +40,9 @@ module Purchaser
         else
           15
         end
+      if premium? && item.quality == '4k'
+        price = price * 0.9
+      end
     else
       raise NotImplementedError, "unknown product kind: #{item.kind}"
     end
@@ -69,5 +75,9 @@ module Purchaser
     return {} unless File.exist?(repository_file_path)
     @_isbn_repository ||= CSV.read(repository_file_path, headers: true, header_converters: :symbol)
                              .index_by { |entry| entry[:isbn] }
+  end
+
+  def premium?
+    Download.where(user: current_user).count >= 5
   end
 end
