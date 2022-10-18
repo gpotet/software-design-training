@@ -1,7 +1,10 @@
 require 'date'
 
 class ProductsController < ApplicationController
-  include Pricer
+  include Purchaser
+
+  skip_before_action :authenticate_customer
+
   def index
     items =
       if params[:month].present?
@@ -11,6 +14,12 @@ class ProductsController < ApplicationController
       else
         Item.all
       end
-    @products = items.map { |item| item.price = price(item); item }
+    @products = items.map { |item| item.price = compute_price(item, buy: false).price; item }
+  end
+
+  def show
+    @product = Item.find(params[:id])
+    @product.price = compute_price(@product, buy: false).price
+    @in_library = Download.where(item: @product, user: current_user).any?
   end
 end

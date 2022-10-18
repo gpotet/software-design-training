@@ -1,36 +1,50 @@
 require "test_helper_training"
 
 class Iteration1Test < TestHelperTraining
-  test 'items should have additional details' do
-    create_book(title: 'Clean Code', isbn: '9780132350884', purchase_price: 12, is_hot: false)
-    create_image(title: 'Manifesto for Agile Software Development', width: 800, height: 600, source: 'Getty', format: 'jpg')
-    create_video(title: 'Making Impossible States Impossible', duration: 120, quality: 'FullHD')
+  test 'hot book price is displayed' do
+    skip 'unskip at iteration 1'
+
+    book = create_book(title: 'The Software Craftsman', isbn: '0134052501', purchase_price: 16, is_hot: true)
+    Timecop.travel(Time.new(2022, 1, 4)) # Tuesday
+    get '/products'
+    assert_price_equal 9.99, response.parsed_body['books'][0]['price']
+    get "/products/#{book.id}"
+    assert_price_equal 9.99, response.parsed_body['price']
+  end
+
+  test 'premium price is displayed' do
+    skip 'unskip at iteration 1'
+
+    Timecop.travel Time.new(2022, 1, 1) + 22.hours - 1.minute
+    book = create_book(title: 'The Mythical Man-Month premium', isbn: '9780132119160', purchase_price: 12, is_hot: false)
+    image = create_image(title: 'Premium title of Image', width: 800, height: 600, source: 'unknown', format: 'jpg')
+    video = create_video(title: 'Technical Debt Metaphor explained by Ward Cunningham *premium', duration: 150, quality: '4k')
 
     get '/products'
-    products_by_kind = response.parsed_body
+    assert_price_equal 15.75, response.parsed_body['books'][0]['price']
+    assert_price_equal 7, response.parsed_body['images'][0]['price']
+    assert_price_equal 12.6, response.parsed_body['videos'][0]['price']
 
-    book = products_by_kind['books'][0]
-    assert_equal 'book', book['kind']
-    assert_equal 'Clean Code', book['title']
-    assert_equal '9780132350884', book['isbn']
-    assert_nil book['purchase_price']
-    assert_equal false, book['is_hot']
-    assert_nil book['created_at']
+    get "/products/#{book.id}"
+    assert_price_equal 15.75, response.parsed_body['price']
 
-    image = products_by_kind['images'][0]
-    assert_equal 'image', image['kind']
-    assert_equal 'Manifesto for Agile Software Development', image['title']
-    assert_equal 800, image['width']
-    assert_equal 600, image['height']
-    assert_equal 'Getty', image['source']
-    assert_equal 'jpg', image['format']
-    assert_nil image['created_at']
+    get "/products/#{image.id}"
+    assert_price_equal 7, response.parsed_body['price']
 
-    video = products_by_kind['videos'][0]
-    assert_equal 'video', video['kind']
-    assert_equal 'Making Impossible States Impossible', video['title']
-    assert_equal 120, video['duration']
-    assert_equal 'FullHD', video['quality']
-    assert_nil video['created_at']
+    get "/products/#{video.id}"
+    assert_price_equal 12.6, response.parsed_body['price']
   end
+
+  test "video price is displayed with 40% reduction during the night" do
+    skip 'unskip at iteration 1'
+
+    video = create_video(title: 'From object oriented to functional domain modeling', duration: 150, quality: '4k')
+
+    Timecop.travel(Time.new(2022, 1, 1) + 1.hours) # 1:00 AM
+    get '/products'
+    assert_price_equal 7.2, response.parsed_body['videos'][0]['price']
+    get "/products/#{video.id}"
+    assert_price_equal 7.2, response.parsed_body['price']
+  end
+
 end

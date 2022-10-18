@@ -1,14 +1,20 @@
 class PurchasesController < ApplicationController
-  include Pricer
+  include Purchaser
+
   def index
-    render json: ProductInvoice.where(user_id: params[:user_id])
+    render json: ProductInvoice.where(user: current_user)
   end
 
   def create
-    product = Item.find(params[:product_id])
-    user = User.find(params[:user_id])
-    Download.create(item: product, user: user)
-    ProductInvoice.create!(item: product, user: user, title: product.title, price: price(product))
-    render json: {}
+    begin
+      @product = Item.find(params[:product_id])
+      already_in_library = Download.where(item: @product, user: current_user).any?
+      return render plain: "Product is already in the library of #{current_user.first_name}: #{@product.title}", status: :bad_request if already_in_library
+    rescue ActiveRecord::RecordNotFound
+      return redirect_to products_path
+    end
+    Download.create(item: @product, user: current_user)
+    invoice = compute_price(@product, buy: true)
+    render json: invoice
   end
 end

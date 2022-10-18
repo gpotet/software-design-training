@@ -1,10 +1,7 @@
 require "test_helper_training"
 require "csv"
 
-class Iteration2Test < TestHelperTraining
-  teardown do
-    Timecop.return
-  end
+class PurchaserTest < TestHelperTraining
 
   test 'prices books at +25% margin' do
     book1 = create_book(title: 'Practical Object‑Oriented Design in Ruby', isbn: '9780132930871', purchase_price: 12, is_hot: false)
@@ -12,24 +9,6 @@ class Iteration2Test < TestHelperTraining
 
     book2 = create_book(title: 'Clean Architecture', isbn: '9780134494326', purchase_price: 16, is_hot: false)
     assert_price_equal 20, get_product_price(book2)
-  end
-
-  test 'prices hot books at 9.99 during weekdays' do
-    book = create_book(title: 'The Software Craftsman', isbn: '0134052501', purchase_price: 16, is_hot: true)
-    Timecop.travel(Time.new(2022, 1, 3)) # Monday
-    assert_price_equal 9.99, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 4)) # Tuesday
-    assert_price_equal 9.99, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 5)) # Wednesday
-    assert_price_equal 9.99, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 6)) # Thursday
-    assert_price_equal 9.99, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 7)) # Friday
-    assert_price_equal 9.99, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 8)) # Saturday
-    assert_price_equal 20, get_product_price(book)
-    Timecop.travel(Time.new(2022, 1, 9)) # Sunday
-    assert_price_equal 20, get_product_price(book)
   end
 
   test 'checks the ISBN list to price books' do
@@ -41,14 +20,13 @@ class Iteration2Test < TestHelperTraining
         csv << ['1736049119', '23.99']
       end
 
-      book = create_book(title: 'Working Effectively with Legacy Code', isbn: '0131177052', purchase_price: 12, is_hot: false)
-      assert_price_equal 19.99, get_product_price(book)
+      book = create_book(title: 'Working Effectively with Legacy Code', isbn: '1449373321', purchase_price: 12, is_hot: false)
+      assert_price_equal 14.99, get_product_price(book)
 
-      book = create_book(title: 'Premium Working Effectively with Legacy Code', isbn: '0131177052', purchase_price: 12, is_hot: false)
-      assert_price_equal 20.99, get_product_price(book)
+      book = create_book(title: 'Working Effectively with Legacy Code - 2nd edition', isbn: 'unknown', purchase_price: 12, is_hot: false)
+      assert_price_equal 15, get_product_price(book)
 
-      book = create_book(title: 'Working Effectively with Legacy Code', isbn: '0131177052', purchase_price: 12, is_hot: true)
-      Timecop.travel(Time.new(2022, 1, 3)) # Monday
+      book = create_book(title: 'Working Effectively with Legacy Code - 3rd edition', isbn: '0131177052', purchase_price: 12, is_hot: false)
       assert_price_equal 19.99, get_product_price(book)
     ensure
       File.delete(Rails.root.join('app/assets/config/isbn_prices.csv'))
@@ -95,7 +73,7 @@ class Iteration2Test < TestHelperTraining
 
   test 'prices 4k videos at 0.08/second' do
     Timecop.travel Time.new(2022, 1, 1) + 6.hours
-    video = create_video(title: "L'incertitude, fléau de nos codebases", duration: 150, quality: '4k')
+    video = create_video(title: "Treat Your Code as a Crime Scene - Adam Tornhill", duration: 150, quality: '4k')
     assert_price_equal 12, get_product_price(video)
   end
 
@@ -109,9 +87,9 @@ class Iteration2Test < TestHelperTraining
 
   test 'prices SD videos at 1 per started minute' do
     Timecop.travel Time.new(2022, 1, 1) + 6.hours
-    video60 = create_video(title: 'Property-Based Testing, enfin pour tout le monde', duration: 59, quality: 'SD')
+    video60 = create_video(title: 'Introduction to Property-Based Testing', duration: 59, quality: 'SD')
     assert_price_equal 1, get_product_price(video60)
-    video61 = create_video(title: 'CQRS, Fonctionnel, Event Sourcing & Domain Driven Design', duration: 60, quality: 'SD')
+    video61 = create_video(title: 'CQRS, Fonctionnal programming, Event Sourcing & Domain Driven Design', duration: 60, quality: 'SD')
     assert_price_equal 2, get_product_price(video61)
   end
 
@@ -121,34 +99,9 @@ class Iteration2Test < TestHelperTraining
     assert_price_equal 10, get_product_price(video)
   end
 
-  test 'reduces video prices by -40% during the night' do
-    video = create_video(title: 'From object oriented to functional domain modeling', duration: 150, quality: '4k')
-    Timecop.travel Time.new(2022, 1, 1) + 5.hours - 1.minute
-    assert_price_equal 7.2, get_product_price(video)
-    Timecop.travel Time.new(2022, 1, 1) + 5.hours + 1.minute
-    assert_price_equal 12, get_product_price(video)
-    Timecop.travel Time.new(2022, 1, 1) + 22.hours - 1.minute
-    assert_price_equal 12, get_product_price(video)
-    Timecop.travel Time.new(2022, 1, 1) + 22.hours + 1.minute
-    assert_price_equal 7.2, get_product_price(video)
-  end
-
-  test 'bumps price of any book or video by +5% if the title contains "premium"' do
-    book1 = create_book(title: 'Accelerate', isbn: '9781942788355', purchase_price: 12, is_hot: false)
-    assert_price_equal 15, get_product_price(book1)
-    book = create_book(title: 'The Mythical Man-Month premium', isbn: '9780132119160', purchase_price: 12, is_hot: false)
-    assert_price_equal 15.75, get_product_price(book)
-
-    image = create_image(title: 'Title of Image', width: 800, height: 600, source: 'unknown', format: 'jpg')
-    assert_price_equal 7, get_product_price(image)
-
-    image = create_image(title: 'Premium title of Image', width: 800, height: 600, source: 'unknown', format: 'jpg')
-    assert_price_equal 7, get_product_price(image)
-
-    Timecop.travel Time.new(2022, 1, 1) + 22.hours - 1.minute
-    video = create_video(title: 'Un monolithe microservices ready', duration: 150, quality: '4k')
-    assert_price_equal 12, get_product_price(video)
-    video = create_video(title: 'Dette technique et entropie du logiciel *premium', duration: 150, quality: '4k')
-    assert_price_equal 12.6, get_product_price(video)
+  def get_product_price(product)
+    get "/products/#{product.id}"
+    assert_response :success
+    response.parsed_body['price'].to_f
   end
 end

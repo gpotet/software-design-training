@@ -1,20 +1,18 @@
 # frozen_string_literal: true
-module Pricer
-  def price(item)
-    price =
-      case item.kind
-      when 'book'
-        if isbn_repository[item.isbn].present?
-          isbn_repository[item.isbn][:price].to_f
-        elsif item.is_hot && Time.now.on_weekday?
-          9.99
-        else
-          (item.purchase_price || ENV['BOOK_PURCHASE_PRICE'].to_f) * 1.25
-        end
-      when 'image'
-        if item.source == 'NationalGeographic'
-          image_resolution(item) * 0.02 / 9600
-        elsif item.source == 'Getty'
+module Purchaser
+  def compute_price(item, buy: true)
+    case item.kind
+    when 'book'
+      if isbn_repository[item.isbn].present?
+        price = isbn_repository[item.isbn][:price].to_f
+      else
+        price = (item.purchase_price || ENV['BOOK_PURCHASE_PRICE'].to_f) * 1.25
+      end
+    when 'image'
+      if item.source == 'NationalGeographic'
+        price = image_resolution(item) * 0.02 / 9600
+      elsif item.source == 'Getty'
+        price =
           if item.format == 'raw'
             10
           elsif image_resolution(item) <= 1280 * 720
@@ -24,10 +22,11 @@ module Pricer
           else
             5
           end
-        else
-          7
-        end
-      when 'video'
+      else
+        price = 7
+      end
+    when 'video'
+      price =
         case item.quality
         when '4k'
           0.08 * item.duration.seconds.to_f
@@ -38,18 +37,13 @@ module Pricer
         else
           15
         end
-      else
-        raise NotImplementedError, "unknown product kind: #{item.kind}"
-      end
+    else
+      raise NotImplementedError, "unknown product kind: #{item.kind}"
+    end
 
-    if item.kind == 'video'
-      price = Time.now.hour.between?(5, 21) ? price : price * 0.6
-      price = item.title.downcase.include?('premium') ? price * 1.05 : price
-    end
-    if item.kind == 'book'
-      price = item.title.downcase.include?('premium') ? price * 1.05 : price
-    end
-    price
+    invoice = ProductInvoice.new(item: item, user: current_user, title: item.title, price: price)
+    invoice.save! if buy
+    invoice
   end
 
   def started_minutes(video)
