@@ -42,8 +42,18 @@ module Purchaser
     end
 
     invoice = ProductInvoice.new(item: item, user: current_user, title: item.title, price: price)
-    invoice.save! if buy
-    invoice
+    if buy
+      already_in_library = Download.where(item: @product, user: current_user).any?
+      if already_in_library
+        return render plain: "Product is already in the library of #{current_user.first_name}: #{@product.title}", status: :bad_request
+      else
+        invoice.save!
+        Download.create(item: @product, user: current_user)
+        render json: invoice
+      end
+    else
+      invoice
+    end
   end
 
   def started_minutes(video)
