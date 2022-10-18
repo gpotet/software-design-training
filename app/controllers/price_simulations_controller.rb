@@ -1,6 +1,6 @@
 class PriceSimulationsController < ApplicationController
   def compute
-    # FIXME at iteration 4
+    # FIXME in bonus iteration
     render json: { price: 0 }
   end
 end

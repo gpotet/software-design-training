@@ -1,6 +1,6 @@
 require "test_helper_training"
 
-class Iteration1Test < TestHelperTraining
+class Iteration1PricingTest < TestHelperTraining
   test 'hot book price is displayed' do
     skip 'unskip at iteration 1'
 

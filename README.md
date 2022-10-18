@@ -23,10 +23,13 @@ Tips:
 
 ## Initial state
 
-You have a `products_controller` allowing to list all the products by kind.
-Users can browse them and download them. Their downloaded list is available in the `downloads_controller`.
+* `ProductsController` allows to list all products by kind (`ProductsController#index`), and also to display details for a given product (`ProductsController#show`).
+* Authenticated users can buy a product using `PurchasesController#create`, which is added to their library so they can download it anytime using `DownloadsController#index`.
+* Authenticated users can also consult their past invoices list using `PurchasesController#index`.
 
-Now let's start and open [instructions/iteration1.md](instructions/iteration1.md) for the first iteration.
+All existing behavior is covered with tests.
+
+Now let's start and open [instructions/iteration_1_pricing.md](instructions/iteration_1_pricing.md) for the first iteration.
 We provide minimal tests for each iteration to guide you (see `iteration_x_test.rb`), but you can write more if you want/need.
 
 **Please do not look at instructions/tests ahead of time, that would spoil you and ruin the training ^^**
