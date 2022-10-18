@@ -45,5 +45,8 @@ Products have different details depending on item kind:
 We want to apply price variations also in the products list and product details endpoints.
 * Unfortunately, the code is currently hard to change, let's refactor it first.
   * Existing tests cover all existing cases, you can refactor safely
+  * Step 1: Remove business logic from controllers (and concerns)
+  * Step 2: No usage of AR API outside of models
+  * Step 3: Separation of concerns: do you see how products and purchases endpoints are coupled?
 * Once you're done with refactoring, let's develop our new feature
   * Tests in `iteration_1_test.rb` cover new cases, you just need to un-skip them
