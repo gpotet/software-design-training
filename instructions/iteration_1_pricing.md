@@ -52,7 +52,7 @@ We want to apply price variations also in the products list and product details 
   * Existing tests cover all existing cases, you can refactor safely
   * Step 1: Products and purchases endpoints seem very coupled regarding pricing, let's separate them properly.
   * Step 2: Let's apply [Avoid defining domain logic in Controllers](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1185906950/Avoid+defining+domain+logic+in+Rails+Controllers) guideline.
-  * Step 2: Let's apply [Avoid using ActiveRecord API outside of ActiveRecord models](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186496627/ADOPT+Avoid+using+ActiveRecord+API+outside+of+ActiveRecord+models)
+  * Step 3: Let's apply [Avoid using ActiveRecord API outside of ActiveRecord models](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186496627/ADOPT+Avoid+using+ActiveRecord+API+outside+of+ActiveRecord+models)
     * And also [Consider using classes encapsulating ActiveRecord queries](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186627655/ASSESS+Consider+using+classes+encapsulating+ActiveRecord+queries) if you see opportunities.
 * Once you're done with refactoring, let's develop our new feature
   * Tests in `iteration_1_pricing_test.rb.rb` covers new cases, you just need to un-skip them
