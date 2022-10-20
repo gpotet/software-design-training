@@ -1,7 +1,8 @@
 require "test_helper_training"
 require "csv"
 
-class PurchaserTest < TestHelperTraining
+class PurchaserTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
 
   test 'prices books at +25% margin' do
     book1 = create_book(title: 'Practical Object‑Oriented Design in Ruby', isbn: '9780132930871', purchase_price: 12, is_hot: false)

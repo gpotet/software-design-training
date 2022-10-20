@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class BonusPricingSimulationTest < TestHelperTraining
+class BonusPricingSimulationTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'price a book' do
     skip 'unskip when starting to work on "Bonus: pricing simulation"'
     assert_price_equal 15, get_price(kind: 'book', isbn: '9786612101090', purchase_price: 12)

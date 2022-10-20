@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class Iteration1PricingTest < TestHelperTraining
+class Iteration1PricingTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'hot book price is displayed' do
     skip 'unskip at iteration 1'
 

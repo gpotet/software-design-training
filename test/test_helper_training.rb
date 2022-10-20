@@ -1,19 +1,16 @@
 require "test_helper"
 
-class TestHelperTraining < ActionDispatch::IntegrationTest
-  teardown do
-    Timecop.return
-  end
+module TestHelperTraining
   def create_book(title:, content: 'content', isbn: nil, purchase_price: nil, is_hot: nil, created_at: nil)
-    Book.create!(kind: 'book', title: title, content: content, created_at: created_at, isbn: isbn, purchase_price: purchase_price, is_hot: is_hot)
+    Products::Book.create!(kind: 'book', title: title, content: content, created_at: created_at, isbn: isbn, purchase_price: purchase_price, is_hot: is_hot)
   end
 
   def create_image(title:, content: 'content', width: nil, height: nil, source: nil, format: nil, created_at: nil)
-    Image.create!(kind: 'image', title: title, content: content, created_at: created_at, width: width, height: height, source: source, format: format)
+    Products::Image.create!(kind: 'image', title: title, content: content, created_at: created_at, width: width, height: height, source: source, format: format)
   end
 
   def create_video(title:, content: 'content', duration: nil, quality: nil, created_at: nil)
-    Video.create!(kind: 'video', title: title, content: content, created_at: created_at, duration: duration, quality: quality)
+    Products::Video.create!(kind: 'video', title: title, content: content, created_at: created_at, duration: duration, quality: quality)
   end
 
   def create_user(first_name:)

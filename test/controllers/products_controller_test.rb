@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class ProductsControllerTest < TestHelperTraining
+class ProductsControllerTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'get all products' do
     create_book(title: 'Domain-Driven Design', content: 'Book1 content')
     create_book(title: 'Turn the Ship Around', content: 'Book2 content')

@@ -10,15 +10,15 @@ class ProductsController < ApplicationController
       if params[:month].present?
         month_number = Date::MONTHNAMES.index(params[:month].capitalize)
         month_number_string = "%02d" % month_number
-        Item.where("strftime('%m', created_at) = ?", month_number_string)
+        Products::Item.where("strftime('%m', created_at) = ?", month_number_string)
       else
-        Item.all
+        Products::Item.all
       end
     @products = items.map { |item| item.price = compute_price(item, buy: false).price; item }
   end
 
   def show
-    @product = Item.find(params[:id])
+    @product = Products::Item.find(params[:id])
     @product.price = compute_price(@product, buy: false).price
     @in_library = Download.where(item: @product, user: current_user).any?
   end

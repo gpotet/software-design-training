@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class DownloadsControllerTest < TestHelperTraining
+class DownloadsControllerTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'a bought item appears in the library' do
     user = User.create!(first_name: 'Bob')
     book_to_download_1 = create_book(title: 'A Philosophy of Software Design', content: 'Book1 content')

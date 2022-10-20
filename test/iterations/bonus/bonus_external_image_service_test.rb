@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class BonusExternalImageServiceTest < TestHelperTraining
+class BonusExternalImageServiceTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'gets an image with its details from an external service' do
     skip 'unskip when starting to work on "Bonus: External image service"'
     begin

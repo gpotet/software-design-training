@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class ProductInvoice < ApplicationRecord
   belongs_to :user
-  belongs_to :item
+  belongs_to :item, class_name: 'Products::Item'
 
   before_create :apply_price_variation
 

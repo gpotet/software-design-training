@@ -7,7 +7,7 @@ class PurchasesController < ApplicationController
 
   def create
     begin
-      @product = Item.find(params[:product_id])
+      @product = Products::Item.find(params[:product_id])
 
     rescue ActiveRecord::RecordNotFound
       return redirect_to products_path

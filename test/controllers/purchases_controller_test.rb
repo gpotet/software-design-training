@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class PurchasesControllerTest < TestHelperTraining
+class PurchasesControllerTest < ActionDispatch::IntegrationTest
+  include TestHelperTraining
+
   test 'users can purchase products' do
     alice = create_user(first_name: 'Alice')
     bob = create_user(first_name: 'Bob')

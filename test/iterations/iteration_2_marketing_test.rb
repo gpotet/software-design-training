@@ -1,6 +1,8 @@
 require "test_helper_training"
 
-class Iteration4Test < TestHelperTraining
+class Iteration4Test < ActionMailer::TestCase
+  include TestHelperTraining
+
   test 'it sends a newsletter with the existing products' do
     skip 'unskip at iteration 2: Marketing'
     book = create_book(title: 'NoSQL For Dummies', isbn: '2100825208', purchase_price: 42, is_hot: false, created_at: Time.parse('2022-05-05 09:18'))
@@ -29,9 +31,12 @@ class Iteration4Test < TestHelperTraining
       - Duration: 120 seconds
     MAIL
 
-    mail_sender = mock
-    mail_sender.expects(:send_newsletter).with(expected_mail_content)
-    NewsletterJob.perform_now(from: '2022-05-01', to: '2022-05-30', mail_sender: mail_sender)
+    assert_difference ActionMailer::Base.deliveries do
+      Marketing::NewsletterMailer.monthly(from: '2022-05-01', to: '2022-05-30').deliver_now
+    end
+
+    mail_content = ActionMailer::Base.deliveries.last.body.raw_source
+    assert_equal expected_mail_content, mail_content
   end
 
   def create_ratings(product, ratings)

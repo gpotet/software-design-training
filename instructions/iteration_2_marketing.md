@@ -1,7 +1,8 @@
 # Marketing: newsletter
 
 Our store is full of goods to sell, but still has too few sales.
-We want to create a monthly newsletter (`newsletter_job`) recommending best books of the month to all our users, with their corresponding average ratings. 
+We want to create a monthly newsletter recommending best books of the month to all our users, with their corresponding average ratings.
+For this we will use `Marketing::NewsletterMailer#monthly`
 
 But we also started to split properly our application in isolated components with clear boundaries, and we'll need to do some refactoring along the way:
 * Our products repository is a core capability that we want to isolate properly from anything related to marketing. In particular, this means:
@@ -10,51 +11,13 @@ But we also started to split properly our application in isolated components wit
     * In particular, this API doesn't expose any ActiveRecord object
   * We can't have any foreign key between items and marketing related data as we plan to isolate DB schemas. The current version includes one which needs to be removed.
 
-Unskip tests from `iteration_2_marketing_test.rb` and fix what is needed.
 
-<details>
-<summary>Cheatsheet for newsletter formatting (because we want to focus on design)</summary>
+* Unskip tests from `iteration_2_marketing_test.rb` and fix what is needed.
+* The newsletter content is already implemented, you just need to connect pieces. 
 
-Here is a almost-working dummy implementation of the newsletter generation:
-```ruby
-def send_newsletter(books, images, videos)
-  newsletter = ''
-  if books.any?
-    newsletter += "Books\n"
-    books.each do |book|
-      price = compute_price(book, buy: false).price
-      newsletter << <<~TEXT
-      - #{book.title} (#{rating(book)})
-        - Price: #{formatted_price(price)}
-        - ISBN: #{book.isbn}
-      TEXT
-    end
-  end
-  if images.any?
-    newsletter += "Images\n"
-    images.each do |image|
-      price = compute_price(image, buy: false).price
-      newsletter << <<~TEXT
-      - #{image.title} (#{rating(image)})
-        - Price: #{formatted_price(price)}
-        - Resolution: #{image.width}x#{image.height}
-      TEXT
-    end
-  end
-  if videos.any?
-    newsletter += "Videos\n"
-    videos.each do |video|
-      price = compute_price(video, buy: false).price
-      newsletter << <<~TEXT
-      - #{video.title} (#{rating(video)})
-        - Price: #{formatted_price(price)}
-        - Duration: #{video.duration} seconds
-      TEXT
-    end
-  end
-  mail_sender.send_newsletter(newsletter)
-end
+Cheatsheet:
 
+```ruby 
 def formatted_price(price)
   '%.2f' % price
 end
@@ -63,8 +26,6 @@ def average_rating(ratings)
   "#{ratings.sum / ratings.count.to_f}/5"
 end
 ```
-
-</details>
 
 Bonus if you have time: 
   * What are all the components and bounded contexts in our application? 
