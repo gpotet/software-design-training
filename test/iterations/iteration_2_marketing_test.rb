@@ -1,6 +1,6 @@
 require "test_helper_training"
 
-class Iteration4Test < ActionMailer::TestCase
+class Iteration2MarketingTest < ActionMailer::TestCase
   include TestHelperTraining
 
   test 'it sends a newsletter with the existing products' do
