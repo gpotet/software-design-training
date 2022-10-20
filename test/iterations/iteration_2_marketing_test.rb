@@ -17,18 +17,19 @@ class Iteration2MarketingTest < ActionMailer::TestCase
     create_video(title: 'What is DDD - Eric Evans - DDD Europe', duration: 120, quality: 'HD', created_at: Time.parse('2022-05-31 09:18'))
 
     expected_mail_content = <<~MAIL
-    Books
-    - NoSQL For Dummies (1.5/5)
-      - Price: 52.50
-      - ISBN: 2100825208
-    Images
-    - XKCD: Good code (4.5/5)
-      - Price: 7.00
-      - Resolution: 800x600
-    Videos
-    - Living Documentation : you will like documentation (3.5/5)
-      - Price: 15.00
-      - Duration: 120 seconds
+    Please have a look at all products added this month:\r
+    Books\r
+    - NoSQL For Dummies (1.5/5)\r
+      - Price: 52.5\r
+      - ISBN: 2100825208\r
+    Images\r
+    - XKCD: Good code (4.5/5)\r
+      - Price: 7.0\r
+      - Resolution: 800x600\r
+    Videos\r
+    - Living Documentation : you will like documentation (3.5/5)\r
+      - Price: 15.0\r
+      - Duration: 120 seconds\r
     MAIL
 
     assert_difference ActionMailer::Base.deliveries do
