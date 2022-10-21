@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_153946) do
     t.index ["user_id"], name: "index_product_invoices_on_user_id"
   end
 
-  create_table "ratings", force: :cascade do |t|
+  create_table "marketing_ratings", force: :cascade do |t|
     t.integer "rating"
     t.integer "item_id", null: false
     t.datetime "created_at", null: false
@@ -67,5 +67,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_153946) do
   add_foreign_key "downloads", "users"
   add_foreign_key "product_invoices", "items"
   add_foreign_key "product_invoices", "users"
-  add_foreign_key "ratings", "items"
+  add_foreign_key "marketing_ratings", "items"
 end

@@ -41,6 +41,6 @@ class Iteration2MarketingTest < ActionMailer::TestCase
   end
 
   def create_ratings(product, ratings)
-    ratings.each {|rating| Rating.create!(item: product, rating: rating)}
+    ratings.each {|rating| Marketing::Rating.create!(item: product, rating: rating)}
   end
 end
