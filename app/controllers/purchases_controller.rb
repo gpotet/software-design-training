@@ -1,12 +1,17 @@
 class PurchasesController < ApplicationController
+  include Purchaser
+
   def index
-    # FIXME at iteration 5
-    puts "Get user purchases #{params[:user_id]}"
-    render json: [{title: 'book1', item_id: 0, price: 0}]
+    render json: ProductInvoice.where(user: current_user)
   end
 
   def create
-    # FIXME at iteration 5
-    puts "User #{params[:user_id]} purchase item #{params[:product_id]}"
+    begin
+      @product = Products::Item.find(params[:product_id])
+
+    rescue ActiveRecord::RecordNotFound
+      return redirect_to products_path
+    end
+    compute_price(@product, buy: true)
   end
 end

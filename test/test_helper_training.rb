@@ -1,24 +1,30 @@
 require "test_helper"
 
-class TestHelperTraining < ActionDispatch::IntegrationTest
-  def create_book(title:, content: 'content', isbn: '', purchase_price: 0.to_f, is_hot: false, created_at: nil)
-    Item.create!(kind: 'book', title: title, content: content, created_at: created_at)
+module TestHelperTraining
+  def create_book(title:, content: 'content', isbn: nil, purchase_price: nil, is_hot: nil, created_at: nil)
+    Products::Book.create!(kind: 'book', title: title, content: content, created_at: created_at, isbn: isbn, purchase_price: purchase_price, is_hot: is_hot)
   end
 
-  def create_image(title:, content: 'content', width: 0, height: 0, source: '', format: '', created_at: nil)
-    Item.create!(kind: 'image', title: title, content: content, created_at: created_at)
+  def create_image(title:, content: 'content', width: nil, height: nil, source: nil, format: nil, created_at: nil)
+    Products::Image.create!(kind: 'image', title: title, content: content, created_at: created_at, width: width, height: height, source: source, format: format)
   end
 
-  def create_video(title:, content: 'content', duration: 0, quality: '', created_at: nil)
-    Item.create!(kind: 'video', title: title, content: content, created_at: created_at)
+  def create_video(title:, content: 'content', duration: nil, quality: nil, created_at: nil)
+    Products::Video.create!(kind: 'video', title: title, content: content, created_at: created_at, duration: duration, quality: quality)
   end
 
-  def get_product_price(product)
-    get '/products'
-    assert_equal 200, response.status, response.body
-    products_by_kind = response.parsed_body
-    product_result = products_by_kind[product.kind.pluralize].find { |p| p['id'] == product.id}
-    product_result['price'].to_f
+  def create_user(first_name:)
+    User.create!(first_name: first_name)
+  end
+
+  def create_premium_user(first_name:)
+    user = create_user(first_name: first_name)
+    5.times do |i|
+      book = create_book(title: "Book #{i}")
+      post purchases_url, params: { user_id: user.id, product_id: book.id }
+      assert_response :success
+    end
+    user
   end
 
   def assert_price_equal(expected, actual)

@@ -1,0 +1,25 @@
+Please have a look at all products added this month:
+<% if @books.any? %>
+Books
+<% @books.each do |book| %>
+<%= "- #{book.title} (#{book.rating})" %>
+  <%= "- Price: #{book.price}" %>
+  <%= "- ISBN: #{book.isbn}" %>
+<%end %>
+<%end %>
+<% if @images.any? %>
+Images
+<% @images.each do |image| %>
+<%= "- #{image.title} (#{image.rating})" %>
+  <%= "- Price: #{image.price}" %>
+  <%= "- Resolution: #{image.width}x#{image.height}" %>
+<%end %>
+<%end %>
+<% if @videos.any? %>
+Videos
+<% @videos.each do |video| %>
+<%= "- #{video.title} (#{video.rating})" %>
+  <%= "- Price: #{video.price}" %>
+  <%= "- Duration: #{video.duration} seconds" %>
+<%end %>
+<%end %>

@@ -13,20 +13,23 @@ We focus on backend code, so we only develop a REST API, which is used with test
 
 - clone this repo
 - run `bundle install`
-- launch `bin/rails test` and check it works (with some skips ^^)
+- launch `bundle exec rails test` and check it works (with some skips ^^)
 - create your own branch: `impl-<your name>`
 - make a commit at each end of iteration
 
 Tips:
 
-- if you want/need to change models, you can update the migrations and reset the db, it will be quicker/easier ;) (`bin/rails db:drop db:create db:migrate`)
+- if you want/need to change models, you can update the migrations and reset the db, it will be quicker/easier ;) (`bundle exec rails db:drop db:create db:migrate`)
 
 ## Initial state
 
-You have a [products_controller](app/controllers/products_controller.rb) allowing to list all the products by kind.
-Users can browse them and download them. Their downloaded list is available in the [downloads_controller](app/controllers/downloads_controller.rb).
+* `ProductsController` allows to list all products by kind (`ProductsController#index`), and also to display details for a given product (`ProductsController#show`).
+* Authenticated users can buy a product using `PurchasesController#create`, which is added to their library so they can download it anytime using `DownloadsController#index`.
+* Authenticated users can also consult their past invoices list using `PurchasesController#index`.
 
-Now let's start and open [instructions/iteration1.md](instructions/iteration1.md) for the first iteration.
+All existing behavior is covered with tests.
+
+Now let's start and open [instructions/iteration_1_pricing.md](instructions/iteration_1_pricing.md) for the first iteration.
 We provide minimal tests for each iteration to guide you (see `iteration_x_test.rb`), but you can write more if you want/need.
 
 **Please do not look at instructions/tests ahead of time, that would spoil you and ruin the training ^^**
