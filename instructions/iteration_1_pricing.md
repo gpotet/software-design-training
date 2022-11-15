@@ -5,7 +5,21 @@
 When a customer buys a product, we apply some price variations (see pricing rules below)
 Unfortunately, these variations aren't displayed in the product list, which makes it hard to understand for our customers before they actually buy a product.
 
-### Pricing rules
+
+## Instructions
+
+We want to apply price variations also in the products list and product details endpoints.
+* Unfortunately, the code is currently hard to change, let's refactor it first.
+  * Existing tests cover all existing cases, you can refactor safely
+  * Step 1: Products and purchases endpoints seem very coupled regarding pricing, let's separate them properly.
+  * Step 2: Let's apply [Avoid defining domain logic in Controllers](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1185906950/Avoid+defining+domain+logic+in+Rails+Controllers) guideline.
+  * Step 3: Let's apply [Avoid using ActiveRecord API outside of ActiveRecord models](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186496627/ADOPT+Avoid+using+ActiveRecord+API+outside+of+ActiveRecord+models)
+    * And also [Consider using classes encapsulating ActiveRecord queries](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186627655/ASSESS+Consider+using+classes+encapsulating+ActiveRecord+queries) if you see opportunities.
+* Once you're done with refactoring, let's develop our new feature:
+  * Tests in `iteration_1_pricing_test.rb` covers new cases, you just need to un-skip them
+
+
+## Pricing rules
 
 - books:
     - compute price with 25% margin added to the `purchase_price`. 
@@ -36,23 +50,10 @@ Price variations:
 - books and videos only: if the title of the item contains "premium" with any capitalization, increase the price by 5%
 
 
-### Product details
+## Product details
 
 Products have different details depending on item kind:
 
 - books: isbn (string, e.g. '9781603095099'), purchase_price (float), is_hot (boolean)
 - images: width (int), height (int), source ('unknown', 'Getty', 'NationalGeographic'), format ('jpg', 'png', 'raw')
 - videos: duration (int in seconds), quality (4k, SD, FullHD)
-
-
-## Instructions
-
-We want to apply price variations also in the products list and product details endpoints.
-* Unfortunately, the code is currently hard to change, let's refactor it first.
-  * Existing tests cover all existing cases, you can refactor safely
-  * Step 1: Products and purchases endpoints seem very coupled regarding pricing, let's separate them properly.
-  * Step 2: Let's apply [Avoid defining domain logic in Controllers](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1185906950/Avoid+defining+domain+logic+in+Rails+Controllers) guideline.
-  * Step 3: Let's apply [Avoid using ActiveRecord API outside of ActiveRecord models](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186496627/ADOPT+Avoid+using+ActiveRecord+API+outside+of+ActiveRecord+models)
-    * And also [Consider using classes encapsulating ActiveRecord queries](https://doctolib.atlassian.net/wiki/spaces/PTA/pages/1186627655/ASSESS+Consider+using+classes+encapsulating+ActiveRecord+queries) if you see opportunities.
-* Once you're done with refactoring, let's develop our new feature
-  * Tests in `iteration_1_pricing_test.rb.rb` covers new cases, you just need to un-skip them
